@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
-import { Select, Typography } from "@mui/material";
+import { Select, Typography, selectClasses } from "@mui/material";
 /**
  * You will find globals from this file useful!
  */
 import {} from "./globals";
 import { IUniversityClass } from "./types/api_types";
+import { GradeTable } from "./components/GradeTable";
+
+
 
 function App() {
   // You will need to use more of these!
   const [currClassId, setCurrClassId] = useState<string>("");
   const [classList, setClassList] = useState<IUniversityClass[]>([]);
+
+  const [rows, setRows] = useState<any[]>([])
+ 
 
   /**
    * This is JUST an example of how you might fetch some data(with a different API).
@@ -26,14 +32,33 @@ function App() {
    * You will also need to explore the use of async/await.
    *
    */
-  const fetchSomeData = async () => {
-    const res = await fetch("https://cat-fact.herokuapp.com/facts/", {
-      method: "GET",
-    });
-    const json = await res.json();
-    console.log(json);
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      const BUID = "U04647117";
+      const apiKey = "6se7z2q8WGtkxBlXp_YpU-oPq53Av-y_GSYiKyS_COn6AzFuTjj4BQ==";
+      const apiUrl = `https://spark-se-assessment-api.azurewebsites.net/api/class/listBySemester/fall2022`;
 
+      // Fetch class list
+      const classListRes = await fetch(`${apiUrl}?BUID=${BUID}`, {
+        headers: {
+          "x-functions-key": apiKey,
+        },
+      });
+      const classListTemp = await classListRes.json()
+      setClassList(classListTemp);
+      
+    };
+
+    fetchData();
+  }, []);
+
+  function handleOnChange(value: string) {
+    setCurrClassId(value)
+    console.log("it has changed") 
+    console.log("option value: ", value) 
+    console.log("Selected value: " , currClassId) 
+    
+  }
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <Grid container spacing={2} style={{ padding: "1rem" }}>
@@ -47,16 +72,25 @@ function App() {
             Select a class
           </Typography>
           <div style={{ width: "100%" }}>
-            <Select fullWidth={true} label="Class">
-              {/* You'll need to place some code here to generate the list of items in the selection */}
-            </Select>
+            <select id="select" value={currClassId} onChange={e => handleOnChange(e.target.value)}>
+              
+
+            {classList.map((classItem) => (
+                <option key={classItem.classId} value = {classItem.classId} >
+                   {classItem.title}
+                </option> 
+
+              )) 
+            }
+              /* You'll need to place some code here to generate the list of items in the selection */
+              
+            </select>
           </div>
         </Grid>
         <Grid xs={12} md={8}>
           <Typography variant="h4" gutterBottom>
             Final Grades
           </Typography>
-          <div>Place the grade table here</div>
         </Grid>
       </Grid>
     </div>

@@ -10,10 +10,36 @@
  */
 export interface IUniversityClass {
   classId: string;
-  title: string;
   description: string;
-  meetingTime: string;
   meetingLocation: string;
-  status: string;
+  meetingTime: string;
   semester: string;
+  status: string;
+  title: string;
+  
 }
+
+export interface IAssignments {
+  assignment: Assignment[] 
+  
+}
+
+export interface Assignment {
+  assignmentId: string; 
+  classId: string ; 
+  date: string ; 
+  weight: number; 
+}
+
+
+export interface IGrades {
+  classId: string ; 
+  grades: Grade[]; 
+  name: string ; 
+  studentId: string ; 
+}
+
+export interface Grade {
+  [assignmentID: string]: number
+}
+
